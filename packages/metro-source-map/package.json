@@ -35,6 +35,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/parser": "^7.25.3",
+    "metro-babel-register": "0.82.1",
     "terser": "^5.15.0"
   },
   "engines": {
