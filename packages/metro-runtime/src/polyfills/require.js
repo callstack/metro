@@ -464,7 +464,9 @@ function loadModuleImplementation(
       if (Refresh != null) {
         const RefreshRuntime = Refresh;
         global.$RefreshReg$ = (type, id) => {
-          RefreshRuntime.register(type, moduleId + ' ' + id);
+          // prefix the id with global prefix to enable multiple HMR clients
+          const uniqueId = __METRO_GLOBAL_PREFIX__ + ' ' + moduleId + ' ' + id;
+          RefreshRuntime.register(type, uniqueId);
         };
         global.$RefreshSig$ =
           RefreshRuntime.createSignatureFunctionForTransform;
@@ -497,7 +499,9 @@ function loadModuleImplementation(
       Systrace.endEvent();
 
       if (Refresh != null) {
-        registerExportsForReactRefresh(Refresh, moduleObject.exports, moduleId);
+        // prefix the id with global prefix to enable multiple HMR clients
+        const uniqueId = __METRO_GLOBAL_PREFIX__ + ' ' + moduleId;
+        registerExportsForReactRefresh(Refresh, moduleObject.exports, uniqueId);
       }
     }
 
@@ -991,7 +995,7 @@ if (__DEV__) {
   var registerExportsForReactRefresh = (
     Refresh: any,
     moduleExports: Exports,
-    moduleID: ModuleID,
+    moduleID: string,
   ) => {
     Refresh.register(moduleExports, moduleID + ' %exports%');
     if (moduleExports == null || typeof moduleExports !== 'object') {
@@ -1031,7 +1035,8 @@ if (__DEV__) {
   var requireRefresh = function requireRefresh() {
     return (
       // $FlowFixMe[prop-missing]
-      global[__METRO_GLOBAL_PREFIX__ + '__ReactRefresh'] || metroRequire.Refresh
+      global[global.__METRO_GLOBAL_PREFIX__ + '__ReactRefresh'] ||
+      metroRequire.Refresh
     );
   };
 }
